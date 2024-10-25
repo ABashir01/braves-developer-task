@@ -17,14 +17,13 @@ function App() {
   
   const fetchPlayers = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/batters'); // Replace with the actual API endpoint
+      const response = await fetch('http://127.0.0.1:5000/batters'); 
       const data = await response.json();
-      // console.log(data.batters);
-      setListOfPlayers(data.batters); // Assuming `data.players` contains the list of players
-      setLoading(false); // Set loading to false once data is fetched
+      setListOfPlayers(data.batters); 
+      setLoading(false); 
     } catch (error) {
       console.error('Error fetching players:', error);
-      setLoading(false); // Set loading to false even if there's an error
+      setLoading(false); 
     } 
   };
 

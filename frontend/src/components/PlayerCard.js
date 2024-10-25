@@ -1,34 +1,29 @@
 import React, {useEffect, useState} from 'react';
 import { Box, Heading, List, ListItem, Flex, Divider, Text } from '@chakra-ui/react';
+
 import SprayChart from './SprayChart';
+import HitDistanceHistogram from './HitDistanceHistogram';
+import HitOutcomePieChart from './HitOutcomePieChart';
+import ExitDirectionHistogram from './ExitDirectionHistogram';
+import ExitVelocityHistogram from './ExitVelocityHistogram';
+import LaunchAngleVsExitVelocityScatterPlot from './LaunchAngleVsExitVelocityScatterPlot';
+import HangTimevsHitDistancePlot from './HangTimevsHitDistancePlot';
 
-const mockData = [
-    { exitDirection: 20, hitDistance: 320 },
-    { exitDirection: 45, hitDistance: 400 },
-    { exitDirection: -30, hitDistance: 250 },
-    { exitDirection: 10, hitDistance: 280 },
-    { exitDirection: 60, hitDistance: 450 },
-    { exitDirection: -15, hitDistance: 270 },
-    { exitDirection: 35, hitDistance: 380 },
-    { exitDirection: 50, hitDistance: 410 },
-    { exitDirection: -40, hitDistance: 230 },
-    { exitDirection: 25, hitDistance: 360 },
-    { exitDirection: -20, hitDistance: 290 },
-    { exitDirection: 0, hitDistance: 300 },
-    { exitDirection: 15, hitDistance: 315 },
-    { exitDirection: 30, hitDistance: 340 },
-    { exitDirection: -10, hitDistance: 275 },
-];
-
-
-const PlayerCard = ({ playerName, GraphComponent, graphTypes }) => {
+const PlayerCard = ({ playerName }) => {
     const [playerData, setPlayerData] = useState(null);
+    const [graphType, setGraphType] = useState("Spray Chart");
+
+    const graphTypes = ["Spray Chart", 
+        "Play Outcome Pie Chart", 
+        "Hit Distance Histogram", 
+        "Exit Speed Histogram", 
+        "Launch Angle vs. Exit Speed Chart",
+        "Hit Distance vs. Hang Time Chart"];
 
     const fetchPlayerData = async () => {
         try {
             const response = await fetch(`http://127.0.0.1:5000/batter?batter=${playerName}`);
             const data = await response.json();
-            console.log(data.data);
             setPlayerData(data.data);
         } catch (error) {
             console.error('Error fetching player data:', error);
@@ -37,7 +32,28 @@ const PlayerCard = ({ playerName, GraphComponent, graphTypes }) => {
 
     useEffect(() => {
         fetchPlayerData();
-    }, []);
+    }, [playerName]);
+
+    const GraphComponent = () => {
+        switch (graphType) {
+            case "Spray Chart":
+                return <SprayChart playerData={playerData} />;
+            case "Hit Distance Histogram":
+                return <HitDistanceHistogram playerData={playerData} />;
+            case "Exit Speed Histogram":
+                return <ExitVelocityHistogram playerData={playerData} />;
+            case "Exit Direction Histogram":
+                return <ExitDirectionHistogram playerData={playerData} />;
+            case "Play Outcome Pie Chart":
+                return <HitOutcomePieChart playerData={playerData} />;
+            case "Launch Angle vs. Exit Speed Chart":
+                return <LaunchAngleVsExitVelocityScatterPlot playerData={playerData} />;
+            case "Hit Distance vs. Hang Time Chart":
+                return <HangTimevsHitDistancePlot playerData={playerData} />;
+            default:
+                return <Box>Graph Component</Box>;
+        }
+    }
     
 
     return (
@@ -61,8 +77,10 @@ const PlayerCard = ({ playerName, GraphComponent, graphTypes }) => {
                                 p={2} 
                                 border="1px" 
                                 borderRadius="md" 
-                                borderColor="gray.200" 
-                                _hover={{ bgColor: "gray.50", cursor: "pointer" }}
+                                borderColor="gray.200"
+                                onClick={() => setGraphType(type)} 
+                                bgColor={graphType === type ? "gray.100" : "white"}
+                                _hover={{ bgColor: "gray.100", cursor: "pointer" }}
                             >
                                 <Text fontSize="md" fontWeight="medium">
                                     {type}
@@ -75,7 +93,7 @@ const PlayerCard = ({ playerName, GraphComponent, graphTypes }) => {
                 {/* Graph Component */}
                 <Divider orientation="vertical" height="auto" mx={4} borderColor={"black"}/>
                 <Box flex="2" pl={4} width={"30%"}>
-                    {playerData ? <SprayChart playerData={playerData}/> : <Box>Loading... </Box>}
+                    {playerData ? GraphComponent() : <Box>Loading... </Box>}
                 </Box>
             </Flex>
 

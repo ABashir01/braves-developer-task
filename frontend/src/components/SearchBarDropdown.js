@@ -9,19 +9,15 @@ import {
 } from '@chakra-ui/react';
 
 const SearchBarDropdown = ({listOfPlayers, setSelectedPlayer}) => {
-  // List of baseball players
   const players = listOfPlayers;
 
-  // State for managing the search input and filtered results
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredPlayers, setFilteredPlayers] = useState([]);
 
-  // Handler to update search term and filter the list
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
 
-    // Filter players by name based on the search term
     if (value) {
       const filtered = players.filter((player) =>
         player.toLowerCase().includes(value.toLowerCase())
@@ -33,9 +29,9 @@ const SearchBarDropdown = ({listOfPlayers, setSelectedPlayer}) => {
   };
 
   const handleSelectPlayer = (player) => {
-    setSearchTerm(player); // Set the selected player's name in the input
-    setFilteredPlayers([]); // Clear the dropdown (close it)
-    setSelectedPlayer(player); // Pass the selected player to the parent component
+    setSearchTerm(player); 
+    setFilteredPlayers([]); 
+    setSelectedPlayer(player); 
   };
 
   return (
